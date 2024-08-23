@@ -3,41 +3,42 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { api } from "../services/api";
 
 
-// Definição das interfaces para os dados de autenticação e o contexto
-interface AuthContextData {
+type AuthContextData = {
   user: User | null;
-  signIn: ({ email, password }: SignInProps) => Promise<void>;
+  signIn: (FormUser: SignInProps) => Promise<void>;
   signOut: () => void;
 }
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
+type User = {
+  user: string,
+  name: string,
+  email: string,
+  password: string,
+  idGroup: 1
 }
 
-interface SignInProps {
+type SignInProps = {
   email: string;
   password: string;
 }
 
 
-interface AuthProviderProps {
+type AuthProviderProps = {
   children: ReactNode;
 }
 
-// Criação do contexto de autenticação
+
 export const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [data, setData] = useState<{ user: User | null; token: string | null }>({
     user: null,
-    token: null
+    token: null,
   });
 
-  async function signIn({ email, password }: SignInProps): Promise<void> {
+  async function signIn(FormUser: SignInProps): Promise<void> {
     try {
-      const response = await api.post("usuario/listar", { email, password });
+      const response = await api.post("/auth/login", FormUser);
       const { user, token } = response.data;
 
       localStorage.setItem("@Desk:user", JSON.stringify(user));

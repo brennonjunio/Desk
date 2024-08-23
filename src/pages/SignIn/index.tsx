@@ -1,26 +1,23 @@
-// src/pages/SignIn/index.tsx
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { ButtonLink, Container, Form } from "./styles";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useAuth } from "../../hooks/auth"; // Importando o hook de autenticação
+import { yupResolver } from "@hookform/resolvers/yup"; // Certifique-se de importar corretamente
+import { useAuth } from "../../hooks/auth";
 
 // Definição do esquema de validação com yup
 const SigninSchema = yup.object({
-  username: yup.string().min(6, 'Minimo 6 caracteres').required("Usuário é obrigatório"),
+  username: yup.string().min(6, 'Mínimo 6 caracteres').required("Usuário é obrigatório").matches(/^\S*$/, "O nome de usuário não pode conter espaços"),
   password: yup.string().required("Senha é obrigatória")
 });
 
-// Tipagem para os dados do formulário
-interface SignInFormData {
+type SignInFormData = {
   username: string;
   password: string;
 }
 
 export function SignIn() {
-  const { signIn } = useAuth();
   const { control, handleSubmit, formState: { errors } } = useForm<SignInFormData>({
     resolver: yupResolver(SigninSchema),
     defaultValues: {
@@ -29,13 +26,14 @@ export function SignIn() {
     }
   });
 
+  const { signIn } = useAuth();
+
   async function handleSignIn(data: SignInFormData) {
     try {
       await signIn({
         email: data.username,
         password: data.password
-      });
-      console.log('Sign In Successful');
+      })
     } catch (error) {
       console.error('Sign In Failed', error);
     }
@@ -73,7 +71,6 @@ export function SignIn() {
 
         <Button title="Entrar" type="submit" />
         <ButtonLink to='/register'>Criar conta</ButtonLink>
-
       </Form>
     </Container>
   );
