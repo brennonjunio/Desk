@@ -1,21 +1,14 @@
-import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-import { ButtonLink, Container, Form } from "./styles";
+import { Button } from "../../../components/Button";
+import { Input } from "../../../components/Input";
+import { ButtonLink, Container, Form } from "../Styles/SignStyles";
 import { useForm, Controller } from "react-hook-form";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup"; // Certifique-se de importar corretamente
-import { useAuth } from "../../hooks/auth";
+import { useAuth } from "../../../hooks/auth";
+import { SignInFormData, SigninSchema } from "../SignIn.validationsScheme";
+import { ToastContainer } from "react-toastify";
 
 // Definição do esquema de validação com yup
-const SigninSchema = yup.object({
-  username: yup.string().min(6, 'Mínimo 6 caracteres').required("Usuário é obrigatório").matches(/^\S*$/, "O nome de usuário não pode conter espaços"),
-  password: yup.string().required("Senha é obrigatória")
-});
 
-type SignInFormData = {
-  username: string;
-  password: string;
-}
 
 export function SignIn() {
   const { control, handleSubmit, formState: { errors } } = useForm<SignInFormData>({
@@ -50,8 +43,8 @@ export function SignIn() {
           render={({ field }) => (
             <Input
               {...field}
-              type='text'
-              placeholder='Usuário'
+              type="text"
+              placeholder="Usuário"
               error={errors.username?.message}
             />
           )}
@@ -62,16 +55,17 @@ export function SignIn() {
           render={({ field }) => (
             <Input
               {...field}
-              type='password'
-              placeholder='Senha'
+              type="password"
+              placeholder="Senha"
               error={errors.password?.message}
             />
           )}
         />
 
         <Button title="Entrar" type="submit" />
-        <ButtonLink to='/register'>Criar conta</ButtonLink>
+        <ButtonLink to="/register">Criar conta</ButtonLink>
       </Form>
+      <ToastContainer />
     </Container>
   );
 }
